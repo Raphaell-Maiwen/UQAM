@@ -1,0 +1,406 @@
+
+/**
+ * I N F x 1 2 0
+ *
+ * D�crivez votre classe Tp3Gr41 ici.
+ * 
+ * @author (votre nom) 
+ * @version (une date)
+ *
+ * (votre code permanent)
+ * (votre adresse de courriel)
+ */
+ 
+public class Tp3Gr41 {
+    //TODO: Choix de catégorie en utilisant la methode de classe Vehicule appropriée. 
+    //TODO: Pauses
+    //TODO: Fichiers
+    // Autres m�thodes s'il y a lieu
+    
+    public static void main (String[] params) {
+        presentationLogiciel();
+        Vehicule[] tabV = new Vehicule [nbrVehicules()];
+        
+        menuPrincipal(tabV);
+    } // main
+    
+    public static void presentationLogiciel(){
+        System.out.println("\fBienvenue dans le logiciel du magazine \"VRRROOOOM\"." +
+                            "\nIl vous permettra de consulter et modifier à votre guise " +
+                            "\nl'inventaire des vehicules usages.");
+    }
+    
+    public static int nbrVehicules(){
+        System.out.println("\nTout d'abord, veuillez rentrer le nombre de vehicules a stocker." +
+                            "\nCe nombre doit etre situe entre 5 et 15.");
+        int vehicules = 0;
+        
+        while(vehicules < 5 || vehicules > 15){
+            try{
+                vehicules = Clavier.lireInt();
+                if(vehicules < 5 || vehicules > 15){
+                    System.out.println("Erreur! Le nombre n'est pas situe entre 5 et 15.");
+                }
+            } catch (NumberFormatException e){
+                System.out.println("Erreur! Ce n'est pas un entier.");
+                vehicules = 0;
+            }
+        }
+        
+        return vehicules;
+    }
+    
+    public static void menuPrincipal (Vehicule[] tableauVehicules){
+        Vehicule[] tabV = tableauVehicules; 
+        char choix = 'N';
+        
+        choix = afficherValiderChoix(choix);
+                            
+        while(choix != 'Q'){
+            if(choix == 'N'){
+                menuN(tabV);
+            }
+            else if(choix == 'I'){
+                menuI(tabV);
+            }
+            else if(choix == 'L'){
+                menuL(tabV);
+            }
+            else if(choix == 'C'){
+                menuC(tabV);
+            }
+            else if(choix == 'R'){
+                menuR(tabV);
+            }
+            else if(choix == 'V'){
+                menuV(tabV);
+            }
+            else if(choix == 'D'){
+                menuD(tabV);
+            }
+            else if(choix == 'S'){
+                menuS(tabV);
+            }
+            
+            choix = afficherValiderChoix(choix);
+        }
+    }
+    
+    public static char afficherValiderChoix(char choix){
+        System.out.println("Que voulez-vous faire? (Entrez le caractere correspondant a" +
+                            "\nla commande de votre choix.)" +
+                            "\nN- Ajouter un nouveau vehicule a vendre." +
+                            "\nI- Afficher les informations sur un véhicule." +
+                            "\nL- Afficher tous les véhicules." +
+                            "\nC- Afficher les infos sur les vehicules d'une categorie." +
+                            "\nR- Afficher les vehicules dont la description contient la chaine recherchee." +
+                            "\nV- Vendre un vehicule." +
+                            "\nP- Modifier le prix d'un vehicule." +
+                            "\nD- Modifier la description d'un vehicule." +
+                            "\nS- Supprimer un vehicule." +
+                            "\nQ- Quitter le programme.");
+        choix = Character.toUpperCase(Clavier.lireCharLn());
+        while(choix != 'N' && choix != 'I' && choix != 'L' && choix != 'C' && choix != 'R' && choix != 'V' && choix != 'P' &&
+              choix != 'D' && choix != 'S' && choix != 'Q'){
+                    System.out.println("Ceci n'est pas une commande valide." +
+                                        "\nVeuillez entrer un caractere valide.");
+                    choix = Character.toUpperCase(Clavier.lireCharLn());
+        }
+        
+        return choix;
+    }
+    
+    public static void menuN(Vehicule[] tabV){
+        System.out.println("Quelle est la categorie du vehicule? (Entrer le nombre correspondant)." +
+                            "\n0- Non-classifie." +
+                            "\n1- Terrestre." +
+                            "\n2- Aquatique." +
+                            "\n3- Aerien." +
+                            "\n4- Amphibie.");
+        int categorie = -1;
+        String description;
+        String vendeur;
+        double prix = -1.0;
+
+        while(categorie < Vehicule.MIN_CATEGORIE || categorie > Vehicule.MAX_CATEGORIE){
+            try{
+                categorie = Clavier.lireInt();
+                if(categorie < Vehicule.MIN_CATEGORIE || categorie > Vehicule.MAX_CATEGORIE){
+                    System.out.println("Erreur! Le nombre n'est pas situe entre 0 et 4.");
+                }
+            } catch (NumberFormatException e){
+                System.out.println("Erreur! Ce n'est pas un entier." +
+                                    "La categorie par defaut est terrestre.");
+                categorie = Vehicule.CATEGORIE_DEFAUT;
+            }
+        }
+        
+        System.out.println("Veuillez entrer la description du vehicule.");
+        description = Clavier.lireString();
+        
+        System.out.println("Veuillez entrer les informations sur le vendeur.");
+        vendeur = Clavier.lireString();
+        
+        System.out.println("Entrez le prix demande. (Minimum 0).");
+        
+        while(prix < Vehicule.PRIX_MIN){
+            try{
+                prix = Clavier.lireDouble();
+                if(prix < Vehicule.PRIX_MIN){
+                    System.out.println("Erreur! Le nombre est inferieur a 0.");
+                }
+            } catch (NumberFormatException e){
+                System.out.println("Erreur! Ce n'est pas un reel." +
+                                    "Le prix par defaut est 2999,99.");
+                prix = Vehicule.PRIX_MIN;
+            }
+        }
+        
+        for(int i = 0; i < tabV.length; i ++){
+            if(tabV[i] == null){
+                tabV[i] = new Vehicule(categorie, description, vendeur, prix);
+                i = tabV.length; //En donnant à i cette valeur, on s'assure que dès qu'il trouve une case de libre et lui attribue
+                                //le nouveau véhicule, la boucle s'arrête. Sinon, on attribuerait ce véhicule à toutes les cases libres.
+            }
+            else if(i == tabV.length -1){
+                System.out.println("Il ne reste plus de places disponibles pour ajouter des vehicules." + 
+                                    "\nCinq places sont ajoutees pour remedier a ce probleme.");
+                Vehicule[] tableauDeTravail = new Vehicule[tabV.length + 5];
+                
+                for(int j = 0; j < tabV.length - 1; j++){
+                    tableauDeTravail[j] = tabV[j];
+                }
+                
+                tabV = tableauDeTravail;
+                tabV[i] = new Vehicule(categorie, description, vendeur, prix);
+            }
+        }
+    }
+    
+    public static void menuI(Vehicule[] tabV){
+        System.out.println("Entrez le numero du vehicule (entre 1 et " + tabV.length + ")");
+        int id = 0;
+        
+        while(id < 1){
+            try{
+                id = Clavier.lireInt();
+                if(id < 0){
+                    System.out.println("Erreur! Le numero doit etre egal ou superieur a 1.");
+                }
+            } catch (NumberFormatException e){
+                System.out.println("Erreur! Ce n'est pas un entier.");
+            }
+        }
+        
+        if(id > tabV.length -1 || tabV[id - 1] == null){
+            System.out.println("Ce numero n'existe pas en inventaire. Retour au menu principal.");
+            menuPrincipal(tabV);
+        }
+        
+        System.out.println(tabV[id - 1].toString());
+    }
+    
+    public static void menuL(Vehicule[] tabV){
+        for(int i = 0; i < tabV.length; i++){
+            if(tabV[i] != null){
+                System.out.println(tabV[i].toString());
+            }
+        }
+    }
+    
+    public static void menuC(Vehicule[] tabV){
+        int cat = -1;
+        System.out.println("Quelle est la categorie que vous voulez afficher? (Entrer le nombre correspondant)." +
+                            "\n0- Non-classifie." +
+                            "\n1- Terrestre." +
+                            "\n2- Aquatique." +
+                            "\n3- Aerien." +
+                            "\n4- Amphibie.");
+        
+        while(cat < Vehicule.MIN_CATEGORIE || cat > Vehicule.MAX_CATEGORIE){
+            try{
+                cat = Clavier.lireInt();
+                if(cat < Vehicule.MIN_CATEGORIE || cat > Vehicule.MAX_CATEGORIE){
+                    System.out.println("Erreur! Le nombre n'est pas situe entre 0 et 4.");
+                }
+            } catch (NumberFormatException e){
+                System.out.println("Erreur! Ce n'est pas un entier." +
+                                    "La categorie par defaut est terrestre.");
+                cat = Vehicule.CATEGORIE_DEFAUT;
+            }
+        }
+        
+        boolean catEnMemoire = false;
+        
+        for(int i = 0; i < tabV.length; i++){
+            if(tabV[i].getCategorie() == cat){
+                System.out.println(tabV[i].toString());
+                catEnMemoire = true;
+            }
+            else if(i == tabV.length - 1 && !catEnMemoire){
+                System.out.println("Aucun vehicule ne fait parti de cette categorie." +
+                                   "\nRetour au menu principal.");
+                menuPrincipal(tabV);
+            }
+        }
+    }
+    
+    public static void menuR (Vehicule[] tabV){
+        System.out.println("Entrez une description a chercher.");
+        String desc = Clavier.lireString();
+        
+        while(desc.equals("")){
+            System.out.println("Vous ne pouvez laisser la description vide." +
+                                "\nEntrez une description a chercher.");
+            desc = Clavier.lireString();
+        }
+        
+        boolean descEnMemoire = false;
+        
+        for(int i = 0; i < tabV.length; i++){
+            if(tabV[i].getDescription() == desc){
+                System.out.println(tabV[i].toString());
+                descEnMemoire = true;
+            }
+            else if(i == tabV.length - 1 && !descEnMemoire){
+                System.out.println("Aucun vehicule ne contient cette description." +
+                                   "\nRetour au menu principal.");
+                menuPrincipal(tabV);
+            }
+        }
+    }
+    
+    public static void menuV(Vehicule[] tabV){
+        System.out.println("Indiquez le numero du vehicule a vendre (entre 1 et " + tabV.length + ")");
+        int id = 0;
+        
+        while(id < 1){
+            try{
+                id = Clavier.lireInt();
+                if(id < 0){
+                    System.out.println("Erreur! Le numero doit etre egal ou superieur a 1.");
+                }
+            } catch (NumberFormatException e){
+                System.out.println("Erreur! Ce n'est pas un entier.");
+            }
+        }
+        
+        if(id > tabV.length -1 || tabV[id - 1] == null){
+            System.out.println("Ce numero n'existe pas en inventaire. Retour au menu principal.");
+            menuPrincipal(tabV);
+        }
+        else if(tabV[id -1].getVendu()){
+            System.out.println("Ce vehicul est deja vendu. Retour au menu principal.");
+            menuPrincipal(tabV);
+        }
+        else{
+            System.out.println("Le vehicule " + id + " est maintenant vendu.");
+            tabV[id - 1].setVendu(true);
+        }
+    }
+    
+    public static void menuP(Vehicule[] tabV){
+        System.out.println("Indiquez le numero du vehicule dont on modifie le prix (entre 1 et " + tabV.length + ")");
+        int id = 0;
+        double prix = -1.0;
+        
+        while(id < 1){
+            try{
+                id = Clavier.lireInt();
+                if(id < 0){
+                    System.out.println("Erreur! Le numero doit etre egal ou superieur a 1.");
+                }
+            } catch (NumberFormatException e){
+                System.out.println("Erreur! Ce n'est pas un entier.");
+            }
+        }
+        
+        if(id > tabV.length -1 || tabV[id - 1] == null){
+            System.out.println("Ce numero n'existe pas en inventaire. Retour au menu principal.");
+            menuPrincipal(tabV);
+        }
+        else{
+            System.out.println("Quel est le nouveau prix de ce vehicule?");
+            while(prix < Vehicule.PRIX_MIN){
+                try{
+                    prix = Clavier.lireDouble();
+                    if(prix < Vehicule.PRIX_MIN){
+                        System.out.println("Erreur! Le nombre est inferieur a 0.");
+                    }
+                } catch (NumberFormatException e){
+                    System.out.println("Erreur! Ce n'est pas un reel." +
+                                        "Le prix par defaut est 2999,99.");
+                    prix = Vehicule.PRIX_MIN;
+                }
+            }
+        }
+    }
+    
+    public static void menuD(Vehicule[] tabV){
+        System.out.println("Indiquez le numero du vehicule dont on modifie la description (entre 1 et " + tabV.length + ")");
+        int id = 0;
+        String desc = "";
+        
+        while(id < 1){
+            try{
+                id = Clavier.lireInt();
+                if(id < 0){
+                    System.out.println("Erreur! Le numero doit etre egal ou superieur a 1.");
+                }
+            } catch (NumberFormatException e){
+                System.out.println("Erreur! Ce n'est pas un entier.");
+            }
+        }
+        
+        if(id > tabV.length -1 || tabV[id - 1] == null){
+            System.out.println("Ce numero n'existe pas en inventaire. Retour au menu principal.");
+            menuPrincipal(tabV);
+        }
+        else{
+            System.out.println("Quelle est la nouvelle description de ce vehicule?");
+            desc = Clavier.lireString();
+            while(desc.equals("")){
+                System.out.println("Vous ne pouvez laisser la description vide." +
+                                    "\nEntrez une description a chercher.");
+                desc = Clavier.lireString();
+            }
+        }
+    }
+    
+    public static void menuS(Vehicule[] tabV){
+        System.out.println("Indiquez le numero du vehicule a supprimer (entre 1 et " + tabV.length +")");
+        int id = 0;
+        char confirmation = 'Z';
+        
+        while(id < 1){
+            try{
+                id = Clavier.lireInt();
+                if(id < 0){
+                    System.out.println("Erreur! Le numero doit etre egal ou superieur a 1.");
+                }
+            } catch (NumberFormatException e){
+                System.out.println("Erreur! Ce n'est pas un entier.");
+            }
+        }
+        
+        if(id > tabV.length -1 || tabV[id - 1] == null){
+            System.out.println("Ce numero n'existe pas en inventaire. Retour au menu principal.");
+            menuPrincipal(tabV);
+        }
+        else{
+            System.out.println(tabV[id - 1].toString());
+            System.out.println("Etes-vous sur de vouloir supprimer ce vehicule? (O ou N).");
+            
+            confirmation = Character.toUpperCase(Clavier.lireCharLn());
+            while(confirmation != 'O' && confirmation != 'N'){
+                System.out.println("Ceci n'est pas une commande valide." +
+                                    "\nVeuillez entrer un caractere valide. (O ou N).");
+                confirmation = Character.toUpperCase(Clavier.lireCharLn());
+            }
+            
+            if(confirmation == 'N'){
+                
+            }
+        }
+    }
+} // Tp3Gr41
