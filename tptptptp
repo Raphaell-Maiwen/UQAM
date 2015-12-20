@@ -184,13 +184,14 @@ public class Tp3Gr41 {
                                     "\nCinq places sont ajoutees pour remedier a ce probleme.");
                 Vehicule[] tableauDeTravail = new Vehicule[tabV.length + 5]; //On cree un nouveau tableau temporaire, et on lui donne une longueur de 5 cases de plus que tabV.
                 
-                for(int j = 0; j < tabV.length - 1; j++){
+                for(int j = 0; j <= tabV.length - 1; j++){
                     tableauDeTravail[j] = tabV[j]; //On entre tous les elements du tableau original dans le tableau temporaire, qui ne sera pas remplit au complet. 
                 }
                 
                 tabV = tableauDeTravail;//On attribue au tableau original les elements du tableau temporaire, avec les nouvelles cases qui sont vides. 
                 tabV[i] = new Vehicule(categorie, description, vendeur, prix);//Puis, dans notre tout nouveau tableau, on attribue le vehicule qu'on vient de creer.
-                i = tabV.length;
+                //i = tabV.length;
+                System.out.println("#######" + tabV.length);
             }
         }
     }
@@ -231,7 +232,9 @@ public class Tp3Gr41 {
                 System.out.println(tabV[i].toString());
                 vehiculesAffiches = vehiculesAffiches + 1;
             
-                if(vehiculesAffiches >= 5 && tabV[ i + 1] != null && vehiculesAffiches % 5 == 0){
+                if(vehiculesAffiches >= 5 && tabV.length - 1 > i && tabV[ i + 1] != null && vehiculesAffiches % 5 == 0){ //S'il y a 5 vehicules affiches et qu'il en reste a afficher, on demande
+                                                                                                                        //demande a l'utilisateur d'appuyer sur Enter. On repete cette operation a
+                                                                                                                        //chaque multiple de 5.
                     System.out.println("\nAppuyez sur \"Enter\" pour continuer.");
                     Clavier.lireFinLigne();
                 }
