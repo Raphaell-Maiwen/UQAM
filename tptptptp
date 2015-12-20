@@ -10,11 +10,10 @@
  * (votre code permanent)
  * (votre adresse de courriel)
  */
+
+import java.io.*;
  
 public class Tp3Gr41 {
-    //TODO: Choix de catégorie en utilisant la methode de classe Vehicule appropriée. 
-    //TODO: Pauses
-    //TODO: Fichiers
     // Autres m�thodes s'il y a lieu
     
     public static void main (String[] params) {
@@ -22,6 +21,7 @@ public class Tp3Gr41 {
         Vehicule[] tabV = new Vehicule [nbrVehicules()];
         
         menuPrincipal(tabV);
+        finProgramme(tabV);
     } // main
     
     public static void presentationLogiciel(){
@@ -75,6 +75,9 @@ public class Tp3Gr41 {
             else if(choix == 'V'){
                 menuV(tabV);
             }
+            else if(choix == 'P'){
+                menuP(tabV);
+            }
             else if(choix == 'D'){
                 menuD(tabV);
             }
@@ -112,11 +115,11 @@ public class Tp3Gr41 {
     
     public static void menuN(Vehicule[] tabV){
         System.out.println("Quelle est la categorie du vehicule? (Entrer le nombre correspondant)." +
-                            "\n0- Non-classifie." +
-                            "\n1- Terrestre." +
-                            "\n2- Aquatique." +
-                            "\n3- Aerien." +
-                            "\n4- Amphibie.");
+                            "\n0- " + Vehicule.categorie(0) +
+                            "\n1- " + Vehicule.categorie(1) +
+                            "\n2- " + Vehicule.categorie(2) +
+                            "\n3- " + Vehicule.categorie(3) +
+                            "\n4- " + Vehicule.categorie(4));
         int categorie = -1;
         String description;
         String vendeur;
@@ -126,11 +129,13 @@ public class Tp3Gr41 {
             try{
                 categorie = Clavier.lireInt();
                 if(categorie < Vehicule.MIN_CATEGORIE || categorie > Vehicule.MAX_CATEGORIE){
-                    System.out.println("Erreur! Le nombre n'est pas situe entre 0 et 4.");
+                    System.out.println("Erreur! Le nombre n'est pas situe entre 0 et 4." +
+                                    "La categorie par defaut est" + Vehicule.categorie(Vehicule.CATEGORIE_DEFAUT));
+                    categorie = Vehicule.CATEGORIE_DEFAUT;
                 }
             } catch (NumberFormatException e){
                 System.out.println("Erreur! Ce n'est pas un entier." +
-                                    "La categorie par defaut est terrestre.");
+                                    "La categorie par defaut est" + Vehicule.categorie(Vehicule.CATEGORIE_DEFAUT));
                 categorie = Vehicule.CATEGORIE_DEFAUT;
             }
         }
@@ -194,16 +199,23 @@ public class Tp3Gr41 {
         
         if(id > tabV.length -1 || tabV[id - 1] == null){
             System.out.println("Ce numero n'existe pas en inventaire. Retour au menu principal.");
-            menuPrincipal(tabV);
         }
-        
-        System.out.println(tabV[id - 1].toString());
+        else{
+            System.out.println(tabV[id - 1].toString());
+        }
     }
     
     public static void menuL(Vehicule[] tabV){
+        int vehiculesAffiches = 0;
         for(int i = 0; i < tabV.length; i++){
             if(tabV[i] != null){
                 System.out.println(tabV[i].toString());
+                vehiculesAffiches = vehiculesAffiches + 1;
+            
+                if(vehiculesAffiches >= 5 && tabV[ i + 1] != null && vehiculesAffiches % 5 == 0){
+                    System.out.println("Appuyez sur \"Enter\" pour continuer.");
+                    Clavier.lireFinLigne();
+                }
             }
         }
     }
@@ -224,23 +236,20 @@ public class Tp3Gr41 {
                     System.out.println("Erreur! Le nombre n'est pas situe entre 0 et 4.");
                 }
             } catch (NumberFormatException e){
-                System.out.println("Erreur! Ce n'est pas un entier." +
-                                    "La categorie par defaut est terrestre.");
-                cat = Vehicule.CATEGORIE_DEFAUT;
+                System.out.println("Erreur! Ce n'est pas un entier." + "\nVeuillez entrer un entier.");
             }
         }
         
         boolean catEnMemoire = false;
         
         for(int i = 0; i < tabV.length; i++){
-            if(tabV[i].getCategorie() == cat){
+            if(tabV[i] != null && tabV[i].getCategorie() == cat){
                 System.out.println(tabV[i].toString());
                 catEnMemoire = true;
             }
             else if(i == tabV.length - 1 && !catEnMemoire){
-                System.out.println("Aucun vehicule ne fait parti de cette categorie." +
+                System.out.println("Aucun vehicule ne fait partie de cette categorie." +
                                    "\nRetour au menu principal.");
-                menuPrincipal(tabV);
             }
         }
     }
@@ -258,14 +267,13 @@ public class Tp3Gr41 {
         boolean descEnMemoire = false;
         
         for(int i = 0; i < tabV.length; i++){
-            if(tabV[i].getDescription() == desc){
+            if(tabV[i] != null && tabV[i].getDescription().equals(desc)){
                 System.out.println(tabV[i].toString());
                 descEnMemoire = true;
             }
             else if(i == tabV.length - 1 && !descEnMemoire){
                 System.out.println("Aucun vehicule ne contient cette description." +
                                    "\nRetour au menu principal.");
-                menuPrincipal(tabV);
             }
         }
     }
@@ -287,11 +295,9 @@ public class Tp3Gr41 {
         
         if(id > tabV.length -1 || tabV[id - 1] == null){
             System.out.println("Ce numero n'existe pas en inventaire. Retour au menu principal.");
-            menuPrincipal(tabV);
         }
         else if(tabV[id -1].getVendu()){
-            System.out.println("Ce vehicul est deja vendu. Retour au menu principal.");
-            menuPrincipal(tabV);
+            System.out.println("Ce vehicule est deja vendu. Retour au menu principal.");
         }
         else{
             System.out.println("Le vehicule " + id + " est maintenant vendu.");
@@ -317,7 +323,6 @@ public class Tp3Gr41 {
         
         if(id > tabV.length -1 || tabV[id - 1] == null){
             System.out.println("Ce numero n'existe pas en inventaire. Retour au menu principal.");
-            menuPrincipal(tabV);
         }
         else{
             System.out.println("Quel est le nouveau prix de ce vehicule?");
@@ -329,10 +334,11 @@ public class Tp3Gr41 {
                     }
                 } catch (NumberFormatException e){
                     System.out.println("Erreur! Ce n'est pas un reel." +
-                                        "Le prix par defaut est 2999,99.");
-                    prix = Vehicule.PRIX_MIN;
+                                        "\nLe prix par defaut est 2999,99.");
+                    tabV[id - 1].setPrix(Vehicule.PRIX_MIN);
                 }
             }
+            tabV[id -1].setPrix(prix);
         }
     }
     
@@ -354,7 +360,6 @@ public class Tp3Gr41 {
         
         if(id > tabV.length -1 || tabV[id - 1] == null){
             System.out.println("Ce numero n'existe pas en inventaire. Retour au menu principal.");
-            menuPrincipal(tabV);
         }
         else{
             System.out.println("Quelle est la nouvelle description de ce vehicule?");
@@ -364,7 +369,9 @@ public class Tp3Gr41 {
                                     "\nEntrez une description a chercher.");
                 desc = Clavier.lireString();
             }
+            tabV[id - 1].setDescription(desc);
         }
+        
     }
     
     public static void menuS(Vehicule[] tabV){
@@ -385,7 +392,6 @@ public class Tp3Gr41 {
         
         if(id > tabV.length -1 || tabV[id - 1] == null){
             System.out.println("Ce numero n'existe pas en inventaire. Retour au menu principal.");
-            menuPrincipal(tabV);
         }
         else{
             System.out.println(tabV[id - 1].toString());
@@ -399,8 +405,55 @@ public class Tp3Gr41 {
             }
             
             if(confirmation == 'N'){
+                System.out.println("La suppression a ete annulee.");
+            }
+            else {
+                tabV[id -1] = null;
                 
+                Vehicule[] tableauDeTravail = new Vehicule[tabV.length];
+                
+                for(int i = 0; i < tabV.length - 1; i++){
+                    if(i != id - 1){
+                        tableauDeTravail[i] = tabV[i];
+                    }
+                }
+                
+                tabV = tableauDeTravail;
+                System.out.println("La supression a ete effectuee.");
             }
         }
+    }
+    
+    public static void finProgramme(Vehicule[] tabV){
+        for(int i = 0; i < tabV.length; i++){
+            if(tabV[i] != null){
+                System.out.println(tabV[i] + "\n");
+            }
+        }
+        
+        FileWriter nonVendus = null;
+        FileWriter vendus = null;
+        try{
+            nonVendus = new FileWriter (".\\NonVendus.txt");
+            vendus = new FileWriter (".\\Vendus.txt");
+        }catch(IOException e){
+            
+        }
+        PrintWriter sortieNonVendus = new PrintWriter ( nonVendus );
+        PrintWriter sortieVendus = new PrintWriter ( vendus );
+        
+        for(int i = 0; i < tabV.length; i++){
+            if(tabV[i] != null){
+                if(tabV[i].getVendu()){
+                    sortieVendus.println(tabV[i].toString() + "\n");
+                }
+                else{
+                    sortieNonVendus.println(tabV[i].toString() + "\n");
+                }
+            }
+        }
+        
+        sortieVendus.close();
+        sortieNonVendus.close();
     }
 } // Tp3Gr41
