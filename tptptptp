@@ -69,31 +69,31 @@ public class Tp3Gr41 {
         while(choix != 'Q'){ //Tous les choix de menu sont appeles avec le tableau en parametre. Ainsi, ils y ont tous
                             //acces et peuvent tous le manipuler sans que ce soit une variable globale. 
             if(choix == 'N'){
-                menuN(tabV); //Ajoute un vehicule
+                tabV = menuN(tabV); //Ajoute un vehicule
             }
             else if(choix == 'I'){
-                menuI(tabV); //Affiche les informations sur un vehicule.
+                tabV = menuI(tabV); //Affiche les informations sur un vehicule.
             }
             else if(choix == 'L'){
-                menuL(tabV); //Affiche tous les vehicules.
+                tabV = menuL(tabV); //Affiche tous les vehicules.
             }
             else if(choix == 'C'){
-                menuC(tabV); //Affiche les infos sur les vehicules d'une categorie.
+                tabV = menuC(tabV); //Affiche les infos sur les vehicules d'une categorie.
             }
             else if(choix == 'R'){
-                menuR(tabV); //Affiche les vehicules avec la chaine recherchee.
+                tabV = menuR(tabV); //Affiche les vehicules avec la chaine recherchee.
             }
             else if(choix == 'V'){
-                menuV(tabV); //Vend un vehicule.
+                tabV = menuV(tabV); //Vend un vehicule.
             }
             else if(choix == 'P'){
-                menuP(tabV); //Modifie le prix d'un vehicule.
+                tabV = menuP(tabV); //Modifie le prix d'un vehicule.
             }
             else if(choix == 'D'){
-                menuD(tabV); //Modifie la description d'un vehicule.
+                tabV = menuD(tabV); //Modifie la description d'un vehicule.
             }
             else if(choix == 'S'){
-                menuS(tabV); //Supprime un vehicule. 
+                tabV = menuS(tabV); //Supprime un vehicule. 
             }
             
             choix = afficherValiderChoix(choix);
@@ -124,7 +124,7 @@ public class Tp3Gr41 {
         return choix;
     }
     
-    public static void menuN(Vehicule[] tabV){ //Ajoute un vehicule.
+    public static Vehicule[] menuN(Vehicule[] tabV){ //Ajoute un vehicule.
         System.out.println("\nQuelle est la categorie du vehicule? (Entrer le nombre correspondant)." +
                             "\n0- " + Vehicule.categorie(0) +
                             "\n1- " + Vehicule.categorie(1) +
@@ -189,14 +189,16 @@ public class Tp3Gr41 {
                 }
                 
                 tabV = tableauDeTravail;//On attribue au tableau original les elements du tableau temporaire, avec les nouvelles cases qui sont vides. 
-                tabV[i] = new Vehicule(categorie, description, vendeur, prix);//Puis, dans notre tout nouveau tableau, on attribue le vehicule qu'on vient de creer.
-                //i = tabV.length;
+                tabV[i + 1] = new Vehicule(categorie, description, vendeur, prix);//Puis, dans notre tout nouveau tableau, on attribue le vehicule qu'on vient de creer.
+                i = tabV.length;
                 System.out.println("#######" + tabV.length);
             }
         }
+        
+        return tabV;
     }
     
-    public static void menuI(Vehicule[] tabV){
+    public static Vehicule[] menuI(Vehicule[] tabV){
         System.out.println("\nEntrez le numero du vehicule (entre 1 et " + tabV.length + ")");
         int id = 0;
         int index;
@@ -223,9 +225,11 @@ public class Tp3Gr41 {
         else{
             System.out.println(tabV[id - 1].toString());
         }
+        
+        return tabV;
     }
     
-    public static void menuL(Vehicule[] tabV){
+    public static Vehicule[] menuL(Vehicule[] tabV){
         int vehiculesAffiches = 0;
         for(int i = 0; i < tabV.length; i++){
             if(tabV[i] != null){
@@ -240,9 +244,11 @@ public class Tp3Gr41 {
                 }
             }
         }
+        
+        return tabV;
     }
     
-    public static void menuC(Vehicule[] tabV){
+    public static Vehicule[] menuC(Vehicule[] tabV){
         int cat = -1;
         System.out.println("\nQuelle est la categorie que vous voulez afficher? (Entrer le nombre correspondant)." +
                             "\n0- " + Vehicule.categorie(0) +
@@ -276,9 +282,11 @@ public class Tp3Gr41 {
                                    "\nRetour au menu principal.");
             }
         }
+        
+        return tabV;
     }
     
-    public static void menuR (Vehicule[] tabV){
+    public static Vehicule[] menuR (Vehicule[] tabV){
         System.out.println("\nEntrez une description a chercher.");
         String desc = Clavier.lireString();
         
@@ -300,9 +308,11 @@ public class Tp3Gr41 {
                                    "\nRetour au menu principal.");
             }
         }
+        
+        return tabV;
     }
     
-    public static void menuV(Vehicule[] tabV){
+    public static Vehicule[] menuV(Vehicule[] tabV){
         System.out.println("\nIndiquez le numero du vehicule a vendre (entre 1 et " + tabV.length + ")");
         int id = 0;
         int index;
@@ -332,9 +342,11 @@ public class Tp3Gr41 {
             System.out.println("\nLe vehicule " + id + " est maintenant vendu.");
             tabV[index].setVendu(true);
         }
+        
+        return tabV;
     }
     
-    public static void menuP(Vehicule[] tabV){
+    public static Vehicule[] menuP(Vehicule[] tabV){
         System.out.println("\nIndiquez le numero du vehicule dont on modifie le prix (entre 1 et " + tabV.length + ")");
         int id = 0;
         double prix = -1.0;
@@ -373,9 +385,11 @@ public class Tp3Gr41 {
             }
             tabV[index].setPrix(prix);
         }
+        
+        return tabV;
     }
     
-    public static void menuD(Vehicule[] tabV){
+    public static Vehicule[] menuD(Vehicule[] tabV){
         System.out.println("\nIndiquez le numero du vehicule dont on modifie la description (entre 1 et " + tabV.length + ")");
         int id = 0;
         String desc = "";
@@ -409,9 +423,10 @@ public class Tp3Gr41 {
             tabV[index].setDescription(desc);
         }
         
+        return tabV;
     }
     
-    public static void menuS(Vehicule[] tabV){
+    public static Vehicule[] menuS(Vehicule[] tabV){
         System.out.println("\nIndiquez le numero du vehicule a supprimer (entre 1 et " + tabV.length +")");
         int id = 0;
         char confirmation = 'Z';
@@ -464,6 +479,8 @@ public class Tp3Gr41 {
                 System.out.println("\nLa supression a ete effectuee.");
             }
         }
+        
+        return tabV;
     }
     
     public static void finProgramme(Vehicule[] tabV){
