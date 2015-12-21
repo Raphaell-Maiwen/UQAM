@@ -501,15 +501,16 @@ public class Tp3Gr41 {
             }
             else {
                 tabV[index] = null;
+                int j = 0;
                 
                 Vehicule[] tableauDeTravail = new Vehicule[tabV.length]; //On utilise le meme principe de tableau temporaire que dans menuN.
                 
-                for(int i = 0; i < tabV.length - 1; i++){
-                    if(i != index){
-                        tableauDeTravail[i] = tabV[i];
+                for(int i = 0; i < tabV.length; i++){
+                    if(tabV[i] != null){
+                        tableauDeTravail[j] = tabV[i];
+                        j = j + 1;
                     }
                 }
-                
                 tabV = tableauDeTravail;
                 System.out.println("\nLa supression a ete effectuee.");
             }
