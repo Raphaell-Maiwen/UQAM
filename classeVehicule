@@ -221,7 +221,7 @@ public class Vehicule {
      * Chaque attribut doit etre sur une ligne differente.
      ******************************************************************************/
     public String toString () {
-       String caracteristiques = "Categorie: " + categorie + ". " + categorie(categorie); 
+       String caracteristiques = "\nCategorie: " + categorie + ". " + categorie(categorie); 
        caracteristiques = caracteristiques + "\nDescription: " + description;
        caracteristiques = caracteristiques + "\nVendeur: " + vendeur;
        caracteristiques = caracteristiques + "\nPrix demande: " + prix;
