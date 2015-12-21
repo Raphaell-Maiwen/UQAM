@@ -191,7 +191,6 @@ public class Tp3Gr41 {
                 tabV = tableauDeTravail;//On attribue au tableau original les elements du tableau temporaire, avec les nouvelles cases qui sont vides. 
                 tabV[i + 1] = new Vehicule(categorie, description, vendeur, prix);//Puis, dans notre tout nouveau tableau, on attribue le vehicule qu'on vient de creer.
                 i = tabV.length;
-                System.out.println("#######" + tabV.length);
             }
         }
         
@@ -250,6 +249,7 @@ public class Tp3Gr41 {
     
     public static Vehicule[] menuC(Vehicule[] tabV){
         int cat = -1;
+        int vehiculesAffiches = 0;
         System.out.println("\nQuelle est la categorie que vous voulez afficher? (Entrer le nombre correspondant)." +
                             "\n0- " + Vehicule.categorie(0) +
                             "\n1- " + Vehicule.categorie(1) +
@@ -275,6 +275,11 @@ public class Tp3Gr41 {
                 System.out.println(tabV[i].toString());
                 catEnMemoire = true; //Si on passe dans cette condition, cela veut dire qu'il existe au moins un vehicule de la categorie recherchee.
                                     //Ainsi, on met le booleen a true.
+                vehiculesAffiches = vehiculesAffiches +1;
+                if(vehiculesAffiches >= 5 && tabV.length - 1 > i && tabV[ i + 1] != null && vehiculesAffiches % 5 == 0){
+                    System.out.println("\nAppuyez sur \"Enter\" pour continuer.");
+                    Clavier.lireFinLigne();
+                }
             }
             else if(i == tabV.length - 1 && !catEnMemoire){ //Si on a parcouru tout le tableau et que catEnMemoire n'est toujours pas true, cela veut dire
                                                             //qu'il n'existe pas un seul vehicule de la categorie recherchee.
@@ -283,12 +288,14 @@ public class Tp3Gr41 {
             }
         }
         
+        
         return tabV;
     }
     
     public static Vehicule[] menuR (Vehicule[] tabV){
         System.out.println("\nEntrez une description a chercher.");
         String desc = Clavier.lireString();
+        int vehiculesAffiches = 0;
         
         while(desc.equals("")){
             System.out.println("\nVous ne pouvez laisser la description vide." +
@@ -296,17 +303,45 @@ public class Tp3Gr41 {
             desc = Clavier.lireString();
         }
         
-        boolean descEnMemoire = false; //La recherche de description fonctionne de la meme maniere que la recherche de categorie.
+        //A enlever?
+
+        boolean checked = false;
         
-        for(int i = 0; i < tabV.length; i++){
-            if(tabV[i] != null && tabV[i].getDescription().equals(desc)){
-                System.out.println(tabV[i].toString());
-                descEnMemoire = true;
+        for(int i =0; i < tabV.length; i++)
+        {
+
+            if(tabV[i] != null)
+            {
+                checked = false;
+                String read = tabV[i].getDescription();
+
+                //On formate les descriptions.
+                read = read.toUpperCase().trim();
+                desc = desc.toUpperCase().trim();
+
+                for(int j = 0; j < read.length() ; j++)
+                {
+                    if(read.charAt(j) == desc.charAt(0) && j <= read.length() - desc.length())
+                    {
+                        if(read.substring(j,(j+desc.length())).equals(desc) && !checked)
+                        {
+                            System.out.println(tabV[i].toString());
+                            checked = true;
+                            vehiculesAffiches = vehiculesAffiches + 1;
+                            
+                            if(vehiculesAffiches >= 5 && tabV.length - 1 > i && tabV[ i + 1] != null && vehiculesAffiches % 5 == 0){
+                                System.out.println("\nAppuyez sur \"Enter\" pour continuer.");
+                                Clavier.lireFinLigne();
+                            }
+                        }  
+                    }
+                }
             }
-            else if(i == tabV.length - 1 && !descEnMemoire){
-                System.out.println("\nAucun vehicule ne contient cette description." +
-                                   "\nRetour au menu principal.");
-            }
+        }
+        
+        if(!checked)
+        {
+            System.out.println("Aucun vehicule ne correspond a votre description");
         }
         
         return tabV;
@@ -398,7 +433,7 @@ public class Tp3Gr41 {
         while(id < 1){
             try{
                 id = Clavier.lireInt();
-                if(id < 0){
+                if(id <= 0){
                     System.out.println("\nErreur! Le numero doit etre egal ou superieur a 1.");
                 }
             } catch (NumberFormatException e){
@@ -413,13 +448,13 @@ public class Tp3Gr41 {
             System.out.println("\nCe numero n'existe pas en inventaire. Retour au menu principal.");
         }
         else{
-            System.out.println("\nQuelle est la nouvelle description de ce vehicule?");
+            System.out.println("\nEntrez la nouvelle description.");
             desc = Clavier.lireString();
-            while(desc.equals("")){
-                System.out.println("\nVous ne pouvez laisser la description vide." +
-                                    "\nEntrez une description a chercher.");
+            while(desc == ""){
+                System.out.println("Vous ne pouvez laisser la description vide. Entrez une description.");
                 desc = Clavier.lireString();
             }
+            
             tabV[index].setDescription(desc);
         }
         
@@ -435,7 +470,7 @@ public class Tp3Gr41 {
         while(id < 1){
             try{
                 id = Clavier.lireInt();
-                if(id < 0){
+                if(id <= 0){
                     System.out.println("\nErreur! Le numero doit etre egal ou superieur a 1.");
                 }
             } catch (NumberFormatException e){
@@ -484,12 +519,6 @@ public class Tp3Gr41 {
     }
     
     public static void finProgramme(Vehicule[] tabV){
-        for(int i = 0; i < tabV.length; i++){
-            if(tabV[i] != null){
-                System.out.println(tabV[i] + "\n");
-            }
-        }
-        
         FileWriter nonVendus = null;
         FileWriter vendus = null;
         try{
