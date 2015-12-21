@@ -1,0 +1,198 @@
+
+/**
+ * I N F x 1 2 0
+ *
+ * Ce programme demande permet à l'utilisateur de pratiquer l'arithmétique de base. On lui demande de choisir un niveau de difficulté, puis on lui fait résoudre des opérations
+ * conformes à ce niveau de difficulté tant qu'il le désire. 
+ * 
+ * Code permanent: MARR06559609
+ * Nom: Marcotte-Poulin
+ * Prénom : Raphaëlle
+ * Raphaëlle Marcotte-Poulin
+ * Sigle du cours: INF1120
+ * Groupe: 41
+ * Professeur: Céline Descheneaux
+ */
+
+public class Tp2Gr41 {
+
+    public static void main (String[] params) {
+        String reponses = "";
+        String nom = "";
+        int difficulte;
+        char ouiNon = 'O';
+        double points = 0.0;
+        int reponse = 0;
+        int operande1 = 0;
+        int operande2 = 0;
+        int nbrOperations = 0;
+        int score = 0;
+        char operation = '+';
+
+        presentation();
+        nom = Clavier.lireString();
+        
+        while(nom.equals("")){
+            //On s'assure que la String n'est pas vide.
+            System.out.println("Veuillez entrer un nom.");
+            nom = Clavier.lireString();
+        }
+
+        System.out.println("Bienvenue " + nom + "! Bonne reussite dans tes exercices!" +
+            "\nChoisis un niveau de difficulté:" +
+            "\nFacile" +
+            "\nMoyen" +
+            "\nDifficile");
+
+        difficulte = saisirDifficulte();
+        
+        
+        System.out.println("Voulez-vous effectuer une operation (repondez par o ou n) ?");
+        ouiNon = saisirEtValiderReponseOuiNon();
+        
+        while(ouiNon == 'O'){
+            //Le programme bouclera jusqu'à ce que l'utilisateur indique qu'il ne veut plus effectuer d'opération. 
+            nbrOperations = nbrOperations + 1;
+            operande1 = JeuArithmetique.operandeAuHasard();
+            operande2 = JeuArithmetique.operandeAuHasard();
+            operation = JeuArithmetique.operationAuHasard();
+            reponse = calculer(operation, operande1, operande2); //Le programme calcule la réponse de l'opération qui a précédemment été générée aléatoirement. On s'en servira pour valider la réponse de l'utilisateur
+                                                                 //et on l'affichera si l'utilisateur ne parvient pas à trouver la bonne réponse. 
+            System.out.println("" + operande1 + operation + operande2 + " = ?");
+            points = points + verifierReponseUtilisateur ( nom, reponse ); //On ajoute aux points de l'utilisateur la valeur que retourne la fonction verifierReponseUtilisateur.
+            System.out.println("Voulez-vous effectuer une operation (repondez par o ou n) ?");
+            ouiNon = saisirEtValiderReponseOuiNon();
+        }
+        score = ((int)((points / 3 / nbrOperations) * 100 + 0.5)); //Le score est calculé en fonction du nombre de points et du nombre d'opérations. On multiplie le résultat (entre 0 et 1) par 100,
+                                                                   //puis on y ajoute 0.5 avant de faire un cast pour le transformer en entier. L'addition par 0.5 sert à arrondir l'opération: si le
+                                                                   //nombre après la virgule est plus bas que 0.5, le nombre n'augmentera pas et quand le cast sera fait, le nombre après la virgule
+                                                                   //sera tronqué, arrondissant ainsi le nombre vers le bas. Si le nombre après la virgule est supérieur à 0.5, le nombre augmentera 
+                                                                   //d'une unité, ce qui fera un arrondissement vers le haut.
+        finDeProgramme(nom, score, nbrOperations);
+    }
+
+    public static void presentation(){
+        System.out.println("Ce logiciel vous permettra d'apprendre les bases de l'arithmetique!" +
+                            "Tout d'abord,on vous demandera de choisir un niveau de difficulté. "+
+                            "Ensuite, et ce tant que vous le voudrez, vous résoudrez des opérations adaptées à ce niveau de difficulté."+
+                            "Quand vous déciderez de ne plus résoudre d'opération, votre score sera affiché et témoignera de vos performances."+
+                            "\nAvant tout chose, quel est votre nom?");
+    }
+
+    public static void finDeProgramme(String nom, int score, int nbrOperations){
+        if(nbrOperations == 0){
+            System.out.println("Au revoir " + nom + "! La prochaine fois, faites au moins une opération!");
+        }
+        else{
+            System.out.println(nom +", votre score est " + score + "% avec la mention " + libelle(score) +
+            "\nMerci d'avoir utilise nos services.");
+        }
+    }
+
+    public static int saisirDifficulte(){
+        String saisi = Clavier.lireString().toLowerCase();
+        int difficulte = 0;
+        while(!saisi.equals("facile") && !saisi.equals("moyen") && !saisi.equals("difficile")){
+            //Le choix de difficulté est validé.
+            System.out.println(saisi + " n'est pas un choix valide. ");
+            System.out.println("Choisir un niveau de difficulte (facile, moyen, difficile)");
+            saisi = Clavier.lireString().toLowerCase();
+        }
+
+        if(saisi.equals("facile")){
+            JeuArithmetique.choisirDegreDifficulte ( JeuArithmetique.FACILE );
+            difficulte = JeuArithmetique.FACILE;
+        }
+        else if(saisi.equals("moyen")){
+            JeuArithmetique.choisirDegreDifficulte ( JeuArithmetique.MOYEN );
+            difficulte = JeuArithmetique.MOYEN;
+        }
+        else{
+            JeuArithmetique.choisirDegreDifficulte ( JeuArithmetique.DIFFICILE );
+            difficulte = JeuArithmetique.DIFFICILE;
+        }
+
+        return difficulte;
+    }
+
+    public static char saisirEtValiderReponseOuiNon(){
+        String ouiNon =Clavier.lireString().toUpperCase();
+        
+        while(!ouiNon.equals("O") && !ouiNon.equals("N") && !ouiNon.equals("NON") && !ouiNon.equals("OUI") ){
+            //La réponse est validée.
+            System.out.println("Ce n'est pas une reponse valide." 
+                + " Voulez-vous effectuer une operation (repondez par o ou n) ?" );
+            ouiNon = Clavier.lireString().toUpperCase();
+        }
+        return ouiNon.charAt(0);
+    }
+
+    public static int calculer ( char operation, int op1, int op2 ){
+        //L'opération qui a été générée au hasard est calculée.
+        int resultat = 0;
+        if (operation == '+'){
+            resultat = op1 + op2;
+        }
+        else if (operation == '-'){
+            resultat = op1 - op2;
+        }
+        else if (operation == '*'){
+            resultat = op1 * op2;
+        }
+        else if (operation == '/'){
+            resultat = op1 / op2;
+        }
+        else if (operation == '%'){
+            resultat = op1 % op2;
+        }
+        return resultat;
+    }
+
+    public static String libelle ( int x ) {
+        //Selon le score du joueur pris en paramètre, une mention est attribuée. 
+        String mention = null;
+        if(x >= 90){
+            mention = "excellent";
+        }
+        else if(x >= 75){
+            mention = "tres bien";
+        }
+        else if(x >= 60){
+            mention = "bien";
+        }
+        else if(x >= 45){
+            mention = "passable";
+        }
+        else{
+            mention = "mediocre";
+        }
+        return mention;
+    }
+
+    public static int verifierReponseUtilisateur ( String nom, int reponse ){
+        //Cette fonction prend comme paramètre la réponse attendue, saisit la réponse de l'utilisateur et les compare. Si les réponses sont identiques,
+        //la fonction retourne le nombre de points que l'utilisateur marque (3 s'il a la bonne réponse en un coup, 2 s'il l'a en un coup, 1 s'il l'a en un coup
+        //et évidemment 0 s'il ne la trouve pas. 
+        int essaisRestants = 3;
+        System.out.println("Entrez votre reponse: ");
+        int reponseUtilisateur = Clavier.lireInt();
+        for (int i = 1; i < 3; i++){
+            if(reponseUtilisateur == reponse){
+                System.out.println("Bravo " + nom + "! Bonne reponse!");
+                i = 3; //On met tout de suite l'indice à 3 pour ne plus rentrer dans la boucle. 
+            }
+            else{
+                System.out.println("Desole " + nom + ", ce n'est pas la bonne reponse." );
+                System.out.println("Entrez votre reponse: ");
+                reponseUtilisateur = Clavier.lireInt();
+                essaisRestants = essaisRestants - 1;
+            }
+        }
+        if(reponseUtilisateur != reponse){
+            System.out.println("Desole " + nom + ", ce n'est pas la bonne reponse." );
+            System.out.println(nom + ", la reponse est: " + reponse);
+            essaisRestants = 0;
+        }
+        return essaisRestants;
+    }
+}
