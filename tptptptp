@@ -213,8 +213,6 @@ public class Tp3Gr41 {
             }
         }
         
-        
-        //Appel1 ||tabV[index] == null
         index = trouverVehicule(tabV, id);
         
         
@@ -303,8 +301,6 @@ public class Tp3Gr41 {
             desc = Clavier.lireString();
         }
         
-        //A enlever?
-
         boolean checked = false;
         
         for(int i =0; i < tabV.length; i++)
@@ -363,7 +359,6 @@ public class Tp3Gr41 {
             }
         }
         
-        //Appel2 de fonction
         index = trouverVehicule(tabV, id);
         
         
@@ -398,7 +393,6 @@ public class Tp3Gr41 {
             }
         }
         
-        //Appel3 fonction
         index = trouverVehicule(tabV, id);
         
         if(index == -1){
@@ -440,8 +434,7 @@ public class Tp3Gr41 {
                 System.out.println("\nErreur! Ce n'est pas un entier.");
             }
         }
-        
-        //Appel4 de fonction
+
         index = trouverVehicule(tabV, id);
         
         if(index == -1){
@@ -478,7 +471,6 @@ public class Tp3Gr41 {
             }
         }
         
-        //Appel5 de fonction
         index = trouverVehicule(tabV, id);
         
         if(index == -1){
