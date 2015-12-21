@@ -1,0 +1,235 @@
+package tp1.revisited;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+/**
+ * @author Rafiki
+ */
+public class TP1Revisited {
+    
+    public static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    
+    public static char readChar()
+    {
+        try
+        {
+            return br.readLine().toLowerCase().charAt(0);
+        }
+        catch(IOException e)
+        {
+            return 'e';
+        }
+    }
+    
+    public static int readInt()
+    {
+        try
+        {
+            return Integer.parseInt(br.readLine());
+        }
+        catch(IOException e)
+        {
+            return 9;
+        }
+    }
+    
+    public static double readDouble()
+    {
+        try
+        {
+            return Double.parseDouble(br.readLine());
+        }
+        catch(IOException e)
+        {
+            return 0.0;
+        }
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+        char finProgramme = 'c';
+        char caracteristique = 'p';
+        char memeFacture = 'o';
+        
+        int nbFacture = 0;
+        int typeDeProduit = 0;
+        int quantite = 0;
+        int vivaces = 0;
+        int annuelles = 0;
+        int arbres = 0;
+        int arbustes = 0;
+        
+        double prixMinimal = 0.0;
+        double prixMaximal = 0.0;
+        double prixDuProduit = 0.0;
+        double montant = 0.0;
+        double recettes = 0.0;
+        
+        System.out.println("C'est un logiciel. Il calcule des factures 'n stuff.");
+        
+        System.out.println("Voulez-vous mettre fin au programme? ('f' ou 'c')");
+        finProgramme = readChar();
+        while(finProgramme != 'c' && finProgramme != 'f')
+        {
+            System.out.println("Ce n'est pas une commande valide."
+                    + "\n Voulez-vous mettre fin au programme? ('f' ou 'c')");
+            finProgramme = readChar();
+        }
+        
+        while(finProgramme == 'c')
+        {
+            montant = 0.0;
+            while(memeFacture == 'o')
+            {
+                System.out.println("Quel produit voulez-vous traiter?"
+                        + "\n1 – Plante vivace\n" +
+                        "\n2 – Plante annuelle\n" +
+                        "\n3 – Arbre\n" +
+                        "\n4 – Arbuste");
+                typeDeProduit = readInt();
+
+                while(typeDeProduit < 1 || typeDeProduit > 4)
+                {
+                    System.out.println("Ce n'est pas une commande valide."
+                            + "Entrez un nombre de 1 à 4 selon le produit que vous voulez.");
+                    typeDeProduit = readInt();
+                }
+
+                System.out.println("Quelle caractéristique voulez-vous pour votre plante?"
+                        + "\nP/p – Floraison Prolongee\n" +
+                          "\nC/c – Floraison Courte\n" +
+                          "\nD/d – Feuillage Decoratif\n" +
+                          "\nA/a - Autre");
+                caracteristique = readChar();
+
+                while(caracteristique != 'p' && caracteristique != 'c' && caracteristique != 'd' && caracteristique != 'a')
+                {
+                    System.out.println("Ce n'est pas une commande valide."
+                            + "Entrez une caractéristique (P, c, d ou a).");
+                    caracteristique = readChar();
+                }
+
+                if(typeDeProduit == 1)
+                {
+                    prixMinimal = 3.99;
+                    prixMaximal = 17.99;
+                }
+                else if(typeDeProduit == 2)
+                {
+                    prixMinimal = 1.99;
+                    prixMaximal = 9.99;
+                }
+                else if(typeDeProduit == 3)
+                {
+                    prixMinimal = 24.99;
+                    prixMaximal = 199.99;
+                }
+                else
+                {
+                    prixMinimal = 15.99;
+                    prixMaximal = 49.99;
+                }
+
+                System.out.println("Veuillez entrer le prix unitaire du produit."
+                                + "Il doit se situer entre " + prixMinimal + " et " + prixMaximal);
+                prixDuProduit = readDouble();
+
+                while(prixDuProduit < prixMinimal || prixDuProduit > prixMaximal)
+                {
+                    System.out.println("Le prix n'est pas situé entre." + prixMinimal + " et " + prixMaximal +
+                                       "\nVeuillez essayer de nouveau.");
+                    prixDuProduit = readDouble();
+                }
+
+                System.out.println("En quelle quantité voulez-vous acheter ce produit?");
+                quantite = readInt();
+
+                while(quantite < 0)
+                {
+                    System.out.println("La quantité doit être égale ou supérieure à 0.");
+                    quantite = readInt();
+                }
+                
+                montant += prixDuProduit *quantite;
+                
+                if(typeDeProduit == 1)
+                {
+                    vivaces += quantite;
+                }
+                else if(typeDeProduit == 2)
+                {
+                    annuelles += quantite;
+                }
+                else if(typeDeProduit == 3)
+                {
+                    arbres += quantite;
+                }
+                else
+                {
+                    arbustes += quantite;
+                }
+                
+                System.out.println("Sous-facture:"
+                        + "\nPrix unitaire: " + prixDuProduit
+                        + "\nQuantité: " + quantite
+                        + "\nPrix total: " + prixDuProduit*quantite);
+
+                System.out.println("Souhaitez-vous entrer un autre produit pour ce client? (O ou N)");
+                memeFacture = readChar();
+
+                while(memeFacture != 'o' && memeFacture != 'n')
+                {
+                    System.out.println("Ce n'est pas une commande valide. Entrer O (oui) ou N (non).");
+                    memeFacture = readChar();
+                }
+            }
+            
+            recettes += montant;
+            
+            memeFacture = 'o';
+            nbFacture++;
+            
+            if(montant == 0.0)
+            {
+                System.out.println("Numéro de facture:" + nbFacture +
+                        "\nFACTURE ANNULÉE");
+            }
+            else
+            {
+                System.out.println("Facture totale: "
+                                    + "\nNuméro de facture: " + nbFacture +
+                                    "\nMontant total: " + montant);
+            }
+            
+            System.out.println("Voulez-vous mettre fin au programme? ('f' ou 'c')");
+            finProgramme = readChar();
+            
+            while(finProgramme != 'c' && finProgramme != 'f')
+            {
+                System.out.println("Ce n'est pas une commande valide."
+                        + "\n Voulez-vous mettre fin au programme? ('f' ou 'c')");
+                finProgramme = readChar();
+            }
+        }
+        
+        if(nbFacture == 0)
+        {
+            System.out.println("FIN NORMALE DU PROGRAMME!");
+        }
+        else
+        {
+            System.out.println("Statistiques de fermeture: "
+                                + "\nNombre total de facture: " + nbFacture +
+                                "\nPlantes vivaces vendues: " + vivaces
+                                + "\nPlantes annuelles vendues: " + annuelles
+                                + "\nArbres vendus: " + arbres
+                                + "\nArbustes vendus: " + arbustes +
+                                "\nRecettes totales: " + recettes);
+        }
+    }
+}
