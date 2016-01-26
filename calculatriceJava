@@ -1,0 +1,149 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package AssembleurTP1;
+
+/**
+ *
+ * @author Rafiki
+ */
+public class Calculatrice {
+	public static void main(String args[]){
+		//TODO Multiplication par un nombre negatif.
+		
+		int operande;
+		char operateur = '+';
+		int resultat = 0;
+		boolean div0 = false;
+		
+		while(operateur != 'q'){
+			
+			operande = Pep8.deci();
+			operateur = Pep8.chari();
+			while(operateur == ' ' || operateur == '\n'){
+				operateur = Pep8.chari();
+			}
+			resultat = operande;
+			
+			while(operateur != '='){
+				
+				if(operateur == 'q'){
+					Pep8.deco(resultat);
+					Pep8.stro("\n");
+					Pep8.stop();
+				}
+				else if(operateur != '+' && operateur != '-' && operateur != '*' && 
+						 operateur != '/' && operateur != '%'){
+					Pep8.stro("Erreur d'operateur!" + "\n");
+					Pep8.stop();
+				}
+				else{
+					operande = Pep8.deci();
+				}
+				
+				
+				if(operateur == '+'){
+					resultat += operande;
+				}
+				else if(operateur == '-'){
+					resultat -= operande;
+				}
+				else if(operateur == '*'){
+					int multiplicateur = resultat;
+					if(operande > 0){
+						for(int i = 1; i < operande; i++){
+							resultat += multiplicateur;
+						}
+					}
+					else{
+						for(int i = -1; i > operande; i--){
+							resultat += multiplicateur;
+						}
+						resultat *= -1;
+					}
+				}
+				else if(operateur == '/'){
+					if(operande == 0){
+						div0 = true;
+					}
+					else{
+						int nbrTours = 0;
+						int opTemp = operande;
+						int resulTemp = resultat;
+						
+						if(operande < 0){
+							opTemp = operande * -1;
+						}
+						if(resultat < 0){
+							resulTemp = resultat * -1;
+							nbrTours = 1;
+						}
+						
+						for(int i = 0; resulTemp >= opTemp; i++){
+							resulTemp -= opTemp;
+							nbrTours++;
+						}
+						
+						if((resultat <= 0 && operande > 0) || (resultat >= 0 && operande < 0)){
+							resultat = -nbrTours;
+						}
+						else{
+							resultat = nbrTours;
+						}
+					}
+				}
+				else if(operateur == '%'){
+					for(int i = 1; resultat >= operande; i++){
+						resultat -= operande;
+					}
+				}
+				
+				operateur = Pep8.chari();
+				while(operateur == ' ' || operateur == '\n'){
+					operateur = Pep8.chari();
+				}
+			}
+			
+			if(!div0){
+				Pep8.deco(resultat);
+			}
+			else{
+				Pep8.stro("DIV/0");
+				div0 = true;
+			}
+			
+			Pep8.stro("\n");
+			
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
