@@ -1,5 +1,7 @@
 public class Calc {
 	public static void main(String args[]){
+		//TODO Multiplication par un nombre negatif.
+		
 		int operande;
 		char operateur = '+';
 		int resultat = 0;
@@ -86,8 +88,31 @@ public class Calc {
 				}
 				
 				else if(operateur == '%'){
-					while(resultat >= operande){
-						resultat -= operande;
+					if(operande == 0){
+						div0 = true;
+					}
+					else if(resultat > 0){
+						if(operande < 0){
+							operande *= -1;
+						}
+						
+						while(resultat >= operande){
+							resultat -= operande;
+						}
+					}
+					else{
+						resultat *= -1;
+						if(operande < 0){
+							operande *= -1;
+						}
+						
+						int opTemp = operande;
+						
+						while(resultat > operande){
+							operande += opTemp;
+						}
+						
+						resultat = operande - resultat;
 					}
 				}
 				
@@ -102,7 +127,7 @@ public class Calc {
 			}
 			else{
 				Pep8.stro("DIV/0");
-				div0 = true;
+				div0 = false;
 			}
 			
 			Pep8.stro("\n");
