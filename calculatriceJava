@@ -1,18 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package AssembleurTP1;
-
-/**
- *
- * @author Rafiki
- */
-public class Calculatrice {
+public class Calc {
 	public static void main(String args[]){
-		//TODO Multiplication par un nombre negatif.
-		
 		int operande;
 		char operateur = '+';
 		int resultat = 0;
@@ -78,11 +65,14 @@ public class Calculatrice {
 						}
 						if(resultat < 0){
 							resulTemp = resultat * -1;
-							nbrTours = 1;
 						}
 						
-						for(int i = 0; resulTemp >= opTemp; i++){
+						while(resulTemp >= opTemp){
 							resulTemp -= opTemp;
+							nbrTours++;
+						}
+						
+						if(resulTemp != 0  && resultat < 0){
 							nbrTours++;
 						}
 						
@@ -94,8 +84,9 @@ public class Calculatrice {
 						}
 					}
 				}
+				
 				else if(operateur == '%'){
-					for(int i = 1; resultat >= operande; i++){
+					while(resultat >= operande){
 						resultat -= operande;
 					}
 				}
@@ -119,31 +110,3 @@ public class Calculatrice {
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
