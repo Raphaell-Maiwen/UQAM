@@ -1,62 +1,71 @@
 public class Calc {
 	public static void main(String args[]){
-		//TODO Multiplication par un nombre negatif.
 		
 		int operande;
-		char operateur = '+';
-		int resultat = 0;
-		boolean div0 = false;
+		char operateur = '+'; /*La variable est initialisee avec une valeur par defaut pour que les
+		 						boucles fonctionnent (il y a des comparaisons avec la variable operateur.*/
+		int resultat;
+		boolean div0 = false; /*Ce boolean sert a verifier s'il y a une division par zero. 
+		 						On met par defaut sa valeur a false pour qu'il n'y ait pas
+		 						automatiquement un message d'erreur.*/
 		
-		while(operateur != 'q'){
+		while(true){ /*La boucle qui contient le coeur du programme est une boucle infinie;
+		 				le seul moyen de l'arreter est d'entrer l'operateur 'q'.*/
 			
 			operande = Pep8.deci();
 			operateur = Pep8.chari();
 			while(operateur == ' ' || operateur == '\n'){
 				operateur = Pep8.chari();
-			}
-			resultat = operande;
+			}//Cette boucle permet d'ignorer les espaces et les sauts de ligne.
+			resultat = operande; /*En attribuant au resultat la valeur de l'operande, on s'assure
+			 						de 1.Qu'il ait une valeur (reinitialisee a chaque calcul)
+			 						et qu'on puisse faire des operations dessus et de 2. Que si 
+			 						on entre une operation comme 1 = , le resultat affiche soit 1.*/
 			
-			while(operateur != '='){
-				
-				if(operateur == 'q'){
-					Pep8.deco(resultat);
-					Pep8.stro("\n");
-					Pep8.stop();
-				}
-				else if(operateur != '+' && operateur != '-' && operateur != '*' && 
-						 operateur != '/' && operateur != '%'){
+			while(operateur != '=' && operateur != 'q'){ /*On calculera le resultat des operations 
+			 											jusqu'a ce qu'il y ait un symbole d'egalite.*/
+				if(operateur != '+' && operateur != '-' && operateur != '*' && 
+						 operateur != '/' && operateur != '%'){ //Verification de la validite de l'operateur.
 					Pep8.stro("Erreur d'operateur!" + "\n");
 					Pep8.stop();
 				}
 				else{
-					operande = Pep8.deci();
+					operande = Pep8.deci(); //On va chercher la deuxieme operande.
 				}
 				
 				
-				if(operateur == '+'){
-					resultat += operande;
+				if(operateur == '+'){ //Addition
+					resultat += operande; //La valeur resultat souvent utilisee comme operande.
 				}
-				else if(operateur == '-'){
+				else if(operateur == '-'){ //Soustraction
 					resultat -= operande;
 				}
-				else if(operateur == '*'){
-					int multiplicateur = resultat;
+				else if(operateur == '*'){ //Multiplication
+					int multiplicateur = resultat; /*Cette variable temporaire permettra de multiplier
+					 								le resultat de facon non exponentielle.*/
 					if(operande > 0){
-						for(int i = 1; i < operande; i++){
+						for(int i = 1; i < operande; i++){ 
 							resultat += multiplicateur;
-						}
+						}/*La multiplication n'existant pas, on additionne 
+						la variable resultat a sa valeur originale a chaque 
+						tour de boucle. Ca boucle un nombre de fois egal a 
+						l'operande -1 (car un nombre multiplie par 1 ne devrait pas 
+						passer par la boucle.*/
 					}
 					else{
 						for(int i = -1; i > operande; i--){
 							resultat += multiplicateur;
-						}
-						resultat *= -1;
+						}//Cette boucle utilise un principe similaire a la precedente.
+						
+						resultat *= -1; /*Un nombre positif multiplie par un nombre negatif deviendra
+						 				alors negatif, et un negatif par un negatif deviendra positif.*/
 					}
 				}
-				else if(operateur == '/'){
-					if(operande == 0){
+				else if(operateur == '/'){ //Division
+					if(operande == 0){ 
 						div0 = true;
-					}
+					}/*S'il y a une division par 0, on met le boolean prevu a cet effet a true, et
+					 on ne prend pas la peine de faire les autres calculs pour optimiser.*/
 					else{
 						int nbrTours = 0;
 						int opTemp = operande;
@@ -64,74 +73,90 @@ public class Calc {
 						
 						if(operande < 0){
 							opTemp = operande * -1;
-						}
+						}//On s'assure d'avoir une operande positive. 
 						if(resultat < 0){
 							resulTemp = resultat * -1;
-						}
+						}//Idem pour le resultat.
 						
 						while(resulTemp >= opTemp){
 							resulTemp -= opTemp;
 							nbrTours++;
-						}
+						}/*On compte le nombre de fois que le diviseur peut rentrer dans la dividende
+						 avant de lui etre superieur.*/
 						
 						if(resulTemp != 0  && resultat < 0){
-							nbrTours++;
-						}
+							nbrTours++; 
+						}/*A cause de la definition de la division entiere, on doit faire un tour
+						de plus pour que le produit du diviseur avec le quotient ne soit pas superieur
+						a la dividende dans le cas d'une dividende negative (sauf si le diviseur rentre
+						exactement un certain nombre de fois et que le reste est de 0).*/
 						
 						if((resultat <= 0 && operande > 0) || (resultat >= 0 && operande < 0)){
 							resultat = -nbrTours;
 						}
+						/*Dans le cas d'un diviseur negatif ou d'une dividende positive (mais pas les deux),
+						le resultat est negatif.*/
 						else{
 							resultat = nbrTours;
 						}
 					}
 				}
 				
-				else if(operateur == '%'){
+				else if(operateur == '%'){ //Modulo
 					if(operande == 0){
 						div0 = true;
-					}
+					}//Idem qu'a la division.
 					else if(resultat > 0){
 						if(operande < 0){
 							operande *= -1;
-						}
+						}//Dans le cas d'une dividende positive, on s'assure d'avoir un diviseur positif.
 						
 						while(resultat >= operande){
 							resultat -= operande;
-						}
+						}/*On soustrait le diviseur a la dividende jusqu'a ce que celle-ci soit inferieure
+						 au diviseur. Il n'en reste que le reste, qui sera notre resultat.*/
 					}
 					else{
 						resultat *= -1;
 						if(operande < 0){
 							operande *= -1;
-						}
+						}//Pour une dividende negative, on veut un diviseur negatif.
 						
 						int opTemp = operande;
 						
 						while(resultat > operande){
 							operande += opTemp;
-						}
+						}/*On additionne l'operande (diviseur) a sa valeur originale jusqu'a ce qu'elle 
+						soit superieure au resultat(la dividende). On obtient le produit du diviseur
+						avec le quotient.*/
 						
 						resultat = operande - resultat;
+						/*En soustrayant la dividende au produit du diviseur avec le quotient , on
+						obtient le reste.*/
+						
 					}
 				}
 				
 				operateur = Pep8.chari();
 				while(operateur == ' ' || operateur == '\n'){
 					operateur = Pep8.chari();
-				}
+				}//On va chercher le prochain operateur, toujours en ignorant espaces et sauts de ligne.
 			}
-			
+
 			if(!div0){
 				Pep8.deco(resultat);
-			}
+			}//Dans tous les cas sauf la division par 0, on affiche le resultat.
 			else{
 				Pep8.stro("DIV/0");
-				div0 = false;
+				div0 = false; /*On remet la valeur de div0 a false pour ne pas etre condamne a avoir
+								des erreurs pour toutes les operations a venir.*/
 			}
 			
 			Pep8.stro("\n");
 			
+			if(operateur == 'q'){
+				Pep8.stop();
+			}//Quand on entre le signe d'egalite 'q', on quitte le programme. 
 		}
 	}
 }
