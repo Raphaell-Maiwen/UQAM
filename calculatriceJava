@@ -1,4 +1,6 @@
-public class Calc {
+package AssembleurTP1;
+
+public class Calculatrice {
     public static void main(String args[]){
         
         int operande;
@@ -43,8 +45,11 @@ public class Calc {
                 else if(operateur == '*'){ //Multiplication
                     int multiplicateur = resultat; /*Cette variable temporaire permettra de multiplier
                                                      le resultat de facon non exponentielle.*/
-                    if(operande > 0){
-                        for(int i = 1; i < operande; i++){ 
+                    if(operande == 0){
+                        resultat = 0;
+                    }
+                    else if(operande > 0){
+                        for(int i = 1; i < operande; i++){
                             resultat += multiplicateur;
                         }/*La multiplication n'existant pas, on additionne 
                         la variable resultat a sa valeur originale a chaque 
@@ -61,7 +66,7 @@ public class Calc {
                                          alors negatif, et un negatif par un negatif deviendra positif.*/
                     }
                 }
-                else if(operateur == '/'){ //Division
+                else if(operateur == '/' || operateur == '%'){ //Division
                     if(operande == 0){ 
                         div0 = true;
                     }/*S'il y a une division par 0, on met le boolean prevu a cet effet a true, et
@@ -91,49 +96,19 @@ public class Calc {
                         a la dividende dans le cas d'une dividende negative (sauf si le diviseur rentre
                         exactement un certain nombre de fois et que le reste est de 0).*/
                         
-                        if((resultat <= 0 && operande > 0) || (resultat >= 0 && operande < 0)){
+                        if(operateur == '/'){
+                            if((resultat <= 0 && operande > 0) || (resultat >= 0 && operande < 0)){
                             resultat = -nbrTours;
+                            }
+                            /*Dans le cas d'un diviseur negatif ou d'une dividende positive (mais pas les deux),
+                            le resultat est negatif.*/
+                            else{
+                                resultat = nbrTours;
+                            }
                         }
-                        /*Dans le cas d'un diviseur negatif ou d'une dividende positive (mais pas les deux),
-                        le resultat est negatif.*/
                         else{
-                            resultat = nbrTours;
+                            resultat = resulTemp;
                         }
-                    }
-                }
-                
-                else if(operateur == '%'){ //Modulo
-                    if(operande == 0){
-                        div0 = true;
-                    }//Idem qu'a la division.
-                    else if(resultat > 0){
-                        if(operande < 0){
-                            operande *= -1;
-                        }//Dans le cas d'une dividende positive, on s'assure d'avoir un diviseur positif.
-                        
-                        while(resultat >= operande){
-                            resultat -= operande;
-                        }/*On soustrait le diviseur a la dividende jusqu'a ce que celle-ci soit inferieure
-                         au diviseur. Il n'en reste que le reste, qui sera notre resultat.*/
-                    }
-                    else{
-                        resultat *= -1;
-                        if(operande < 0){
-                            operande *= -1;
-                        }//Pour une dividende negative, on veut un diviseur negatif.
-                        
-                        int opTemp = operande;
-                        
-                        while(resultat > operande){
-                            operande += opTemp;
-                        }/*On additionne l'operande (diviseur) a sa valeur originale jusqu'a ce qu'elle 
-                        soit superieure au resultat(la dividende). On obtient le produit du diviseur
-                        avec le quotient.*/
-                        
-                        resultat = operande - resultat;
-                        /*En soustrayant la dividende au produit du diviseur avec le quotient , on
-                        obtient le reste.*/
-                        
                     }
                 }
                 
