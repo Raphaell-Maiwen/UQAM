@@ -4,8 +4,7 @@ public class Calculatrice {
     public static void main(String args[]){
         
         int operande;
-        char operateur = '+'; /*La variable est initialisee avec une valeur par defaut pour que les
-                                 boucles fonctionnent (il y a des comparaisons avec la variable operateur.*/
+        char operateur;
         int resultat;
         boolean div0 = false; /*Ce boolean sert a verifier s'il y a une division par zero. 
                                  On met par defaut sa valeur a false pour qu'il n'y ait pas
