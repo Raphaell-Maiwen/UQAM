@@ -35,6 +35,7 @@ public class Calculatrice {
                     operande = Pep8.deci(); //On va chercher la deuxieme operande.
                 }
                 
+                
                 if(operateur == '+'){ //Addition
                     resultat += operande; //La valeur resultat souvent utilisee comme operande.
                 }
@@ -95,7 +96,7 @@ public class Calculatrice {
                             resultat = resulTemp;
                         }
                         else{
-                            if(resultat < 0 && operande > 0 || resultat > 0 && operande < 0){
+                            if((resultat < 0 && operande > 0) || (resultat > 0 && operande < 0)){
                                 nbrTours *= -1;
                             }
                             
