@@ -45,7 +45,11 @@ public class Calculatrice {
                 else if(operateur == '*'){ //Multiplication
                     int multiplicateur = resultat; /*Cette variable temporaire permettra de multiplier
                                                      le resultat de facon non exponentielle.*/
-                    if(operande > 0){
+                    
+                    if(operande == 0){
+                        resultat = 0;
+                    }
+                    else if(operande > 0){
                         for(int i = 1; i < operande; i++){ 
                             resultat += multiplicateur;
                         }/*La multiplication n'existant pas, on additionne 
