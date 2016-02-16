@@ -4,7 +4,7 @@ public class Calculatrice {
     public static void main(String args[]){
         
         int operande;
-        char operateur = '+';
+        char operateur;
         int resultat;
         boolean div0 = false;
         
@@ -25,7 +25,6 @@ public class Calculatrice {
                 else{
                     operande = Pep8.deci();
                 }
-                
                 
                 if(operateur == '+'){
                     resultat += operande;
@@ -65,7 +64,6 @@ public class Calculatrice {
                         }
                         if(resultat < 0){
                             resulTemp = resultat * -1;
-                            nbrTours++;
                         }
                         
                         if(resultat != 0){
@@ -73,16 +71,18 @@ public class Calculatrice {
                                 resulTemp -= opTemp;
                                 nbrTours++;
                             }
-                        }
-                        
-                        if(resultat < 0){
-                            resulTemp++;
-                        }
+                        }      
                         
                         if(operateur == '%'){
+                            if(resultat < 0 && resulTemp != 0){
+                            resulTemp++;
+                            }
                             resultat = resulTemp;
                         }
                         else{
+                            if(resultat < 0 && operande > 0 && resulTemp != 0){
+                                nbrTours++;
+                            }
                             if((resultat < 0 && operande > 0) || (resultat > 0 && operande < 0)){
                                 nbrTours *= -1;
                             }
@@ -91,7 +91,6 @@ public class Calculatrice {
                         }
                     }
                 }
-                
                 operateur = Pep8.chari();
                 while(operateur == ' ' || operateur == '\n'){
                     operateur = Pep8.chari();
@@ -107,7 +106,6 @@ public class Calculatrice {
             }
             
             Pep8.stro("\n");
-            
             if(operateur == 'q'){
                 Pep8.stop();
             }
