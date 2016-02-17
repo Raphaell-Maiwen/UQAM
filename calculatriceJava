@@ -73,24 +73,23 @@ public class Calculatrice {
                             }
                         }      
                         
-                        if(operateur == '%'){
-                            if(resultat < 0 && resulTemp != 0){
+                        if(resultat < 0 && resulTemp!= 0){
                             resulTemp++;
-                            }
+                            nbrTours++;
+                        }
+                        
+                        if(operateur == '%'){
                             resultat = resulTemp;
                         }
                         else{
-                            if(resultat < 0 && operande > 0 && resulTemp != 0){
-                                nbrTours++;
-                            }
                             if((resultat < 0 && operande > 0) || (resultat > 0 && operande < 0)){
                                 nbrTours *= -1;
-                            }
-                            
+                            } 
                             resultat = nbrTours;
                         }
                     }
                 }
+                
                 operateur = Pep8.chari();
                 while(operateur == ' ' || operateur == '\n'){
                     operateur = Pep8.chari();
@@ -106,6 +105,7 @@ public class Calculatrice {
             }
             
             Pep8.stro("\n");
+            
             if(operateur == 'q'){
                 Pep8.stop();
             }
