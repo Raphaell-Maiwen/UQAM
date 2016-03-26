@@ -1,0 +1,256 @@
+;On reviendra au début de cette première boucle après chaque opération (donc quand
+;on en rencontre un '='). Ainsi, le programme roule continuellement jusqu'à ce qu'on
+;lui demande de quitter (avec le symbole 'q'). 
+Boucle1: DECI    operande,d  
+         CHARI   symbole,d   
+         LDA     operande,d  
+         STA     resultat,d  
+         LDA     0,i         
+         LDBYTEA symbole,d
+
+;On retourne dans la boucle suivante après chaque opération pour vérifier quel
+;est l'opérateur, et donc quelle sera la prochaine opération à effectuer. Chaque
+;type d'opération est géré ailleurs dans le code.
+Boucle2: CPA     'q',i       
+         BREQ    finOp       
+         CPA     '=',i       
+         BREQ    finOp
+         ;S'il n'y a pas eu de symbole d'égalité, il y a donc nécessairement une
+         ;opérande. On peut la récupérer.
+         DECI    operande,d
+         ;On effectue avec l'opérateur une série de comparaison avec nos cinq
+         ;opérateurs attendus pour voir quelle est l'opération à effectuer. S'il
+         ;n'y a pas de branchement, l'utilisateur n'a pas entré de symbole connu,
+         ;alors on lui affiche un message d'erreur avant de quitter le programme.
+         CPA     '+',i       
+         BREQ    add         
+         CPA     '-',i       
+         BREQ    sous        
+         CPA     '*',i       
+         BREQ    multi       
+         CPA     '/',i       
+         BREQ    divi       
+         CPA     '%',i       
+         BREQ    divi       
+         STRO    erreur,d    
+         STOP      
+
+;Addition          
+add:     LDA     resultat,d  
+         ADDA    operande,d  
+         STA     resultat,d  
+         BR      nextOp      
+
+;Soustraction
+sous:    LDA     resultat,d  
+         SUBA    operande,d  
+         STA     resultat,d  
+         BR      nextOp      
+
+;Multiplication
+multi:   LDA     resultat,d  
+         STA     multeur,d   ;On duplique le résultat pour que la multiplication se
+                             ;fasse normalement, donc sans être exponentielle.
+         LDA     operande,d  
+         CPA     0,i         
+         BRGT    multi1      
+         BRLT    multi2      
+         STA     resultat,d  ;Si le 2ième facteur n'est ni supérieur ni inférieur à 0,
+                             ;on en déduit qu'il est égal à 0 et qu'on peut l'afficher
+                             ;directement sans effectuer d'opération.
+         BR      nextOp      
+
+;Les deux boucles de multiplication ont un comportement similaire: on fait des
+;boucles d'addition jusqu'à ce que le nombre d'itérations soit égal au deuxième
+;facteur (on additionne le premier facteur avec lui-même).
+;Code à effectuer en cas de deuxième facteur positif.
+multi1:  LDA     i,d         
+         ADDA    1,i         
+         STA     i,d         
+         CPA     operande,d  
+         BRGE    finmulti    
+         LDA     resultat,d  
+         ADDA    multeur,d   
+         STA     resultat,d  
+         BR      multi1      
+
+;Code à effectuer en cas de deuxième facteur négatif.
+multi2:  LDA     i,d         
+         SUBA    1,i         
+         STA     i,d         
+         CPA     operande,d  
+         BRLE    neg         
+         LDA     resultat,d  
+         ADDA    multeur,d   
+         STA     resultat,d  
+         BR      multi2      
+
+neg:     LDA     resultat,d  
+         NEGA                
+         STA     resultat,d  
+         BR      finmulti    
+
+;Peu importe ce qui a été fait, la multiplication se termine par cela. 
+;On remet i à 0 pour les prochaines opérations et, comme dans toutes les
+;opérations, on stock le résultat. 
+finmulti:LDA     0,i         
+         STA     i,d         
+         LDA     resultat,d  
+         BR      nextOp      
+
+;Division
+divi:    LDA     operande,d
+         CPA     0,i
+         BREQ    divi0       ;S'il y a division par zéro, on saute les prochaines étapes.
+         BRGT    rangerOp
+         NEGA                ;On s'assure d'avoir un diviseur positif pour la boucle.
+rangerOp:STA     opTemp,d
+         LDA     resultat,d
+         CPA     0,i
+         BREQ    resulNul    ;Il ne sert à rien d'effectuer les boucles de soustraction
+                             ;lorsque la dividende = 0. Le résultat sera 0 de toute façon.
+         BRGT    rangerRe
+         NEGA                ;On s'assure d'avoir une dividende positive pour la boucle.
+rangerRe:STA     resTemp,d
+
+;Dans la boucle suivante, on soustrait le diviseur à la dividende jusqu'à ce que celle-ci
+;soit plus petite que le diviseur. À chaque itération, on augmente de 1 le compteur
+;de nombre de tours. 
+BoucleDi:LDA     resTemp,d
+         CPA     opTemp,d
+         BRLT    finDiv
+         SUBA    opTemp,d
+         STA     resTemp,d
+         LDA     nbrTours,d
+         ADDA    1,i
+         STA     nbrTours,d
+         BR      BoucleDi
+
+;On exécute cette partie de code dès que la boucle de soustraction est terminée.
+;On vérifie d'abord si l'opérateur est un modulo. Sinon, on envoie la dividende
+;originale vers différentes vérifications.         
+finDiv:  LDA     0,i
+         LDBYTEA     symbole,d
+         CPA     '%',i
+         BREQ    modulo
+         LDA     resultat,d
+         CPA     0,i
+         BRLT    verif1      ;La dividende est négative.
+         BR      verif3      ;La dividende est positive.
+
+;Si la dividende est négative, on s'assure que le reste est non nul. Si tel est
+;le cas, on incrémente le quotient 1.         
+verif1:  LDA     resTemp,d 
+         CPA     0,i
+         BREQ    verif2
+         LDA     nbrTours,d
+         ADDA    1,i
+         STA     nbrTours,d 
+         BR      verif2
+
+;Si la dividende est négative (peu importe l'issue de la vérification ci-haut),
+;on vérifie si le diviseur est négatif. Si oui, le reste devient négatif.
+verif2:  LDA     operande,d
+         CPA     0,i
+         BRLT    finDiv2
+         LDA     nbrTours,d
+         NEGA
+         STA     nbrTours,d
+         BR      finDiv2
+
+;Si la dividende est positive, on vérifie que le diviseur est négatif. Si
+;oui, le reste devient négatif.
+verif3:  LDA     operande,d
+         BRGT    finDiv2
+         LDA     nbrTours,d
+         NEGA
+         STA     nbrTours,d
+         BR      finDiv2
+
+;Le quotient est stocké dans le résultat.
+finDiv2: LDA     nbrTours,d
+         STA     resultat,d
+         BR      fDivMod
+
+;Modulo
+;Si le reste est non nul, on va faire une deuxième comparaison plus loin.
+;Dans tous les cas, on revient à "finMod" pour stocker le reste dans le résultat.
+modulo:  LDA     resTemp,d
+         CPA     0,i
+         BRNE    verifMod
+finMod:  LDA     resTemp,d
+         STA     resultat,d
+         BR      fDivMod
+
+;Si la dividende est négative (en plus d'avoir un reste non nul), le reste devient
+;le diviseur (positif) moins le reste calculé précédemment.
+verifMod:LDA     resultat,d
+         CPA     0,i
+         BRGT    finMod
+         LDA     opTemp,d
+         SUBA    resTemp,d
+         STA     resTemp,d
+         BR      finMod
+
+;On réinitialise le nombre de tours à 0 pour les prochaines opérations.
+fDivMod: LDA     0,i
+         STA     nbrTours,d
+         BR      nextOp
+
+resulNul:BR      nextOp
+
+divi0:   LDA     1,i
+         STA     bool0,d     ;On met le "booléen" de division par zéro à "true".
+         BR      nextOp
+
+;On regarde quel est le prochain opérateur de l'entrée, on le stock dans un
+;symbole ainsi que dans le registre A.
+nextOp:  CHARI   symbole,d   
+         LDA     0,i         
+         LDBYTEA symbole,d   
+         BR      Boucle2     
+
+;Code à effectuer en cas d'opérateur '=' ou 'q'. On vérifie d'abord qu'il
+;n'y a pas eu de division par 0. Dans le cas contraire, on affiche le résultat.
+finOp:   LDA     bool0,d     
+         CPA     1,i         
+         BREQ    fin0        
+         DECO    resultat,d  
+
+;On fait un saut de ligne, puis on s'assure que le symbole d'égalité était '='(on
+;revient alors au tout début du programme pour une opération complètement nouvelle).
+;Sinon, cela veut dire que l'utilisateur a demandé à quitter le programme, ce qu'on
+;effectue. 
+finOp2:  CHARO   '\n',i      
+         LDA     0,i         
+         LDBYTEA symbole,d   ;LDA 0,i
+         CPA     '=',i       
+         BREQ    Boucle1     
+         STOP                
+
+;S'il y a eu division par 0, on affiche le message approprié et on remet
+;le "booléen" de division par 0 à "false". 
+fin0:    STRO    div0,d      
+         LDA     0,i         
+         STA     bool0,d     
+         BR      finOp2     
+
+;Ici sont déclarés les symboles du programme ("variables" en Java). 
+resultat:.BLOCK  2          ;Résultat de l'opération jusqu'à présent (s'actualise
+                            ;au fur et mesure d'une opération). Sert donc également
+                            ;de première opérande.
+operande:.BLOCK  2          
+symbole: .BLOCK  2          ;Opérateur.
+multeur: .BLOCK  2          ;Premier facteur de la multiplication.
+i:       .BLOCK  2          ;Itérations de boucles à effectuer (multiplication). 
+resTemp: .BLOCK  2          ;Duplication de la première opérande qu'on modifiera
+                            ;(créée afin de préserver la première opérande originale).
+opTemp:  .BLOCK  2          ;Idem, mais pour la deuxième opérande.
+nbrTours:.BLOCK  2          ;Itérations de boucles effectuées (division).
+bool0:   .WORD   0         ;Symbole qui est utilisé comme un booléen(On ne lui
+                           ;donne comme valeur que 0x0000 ou 0x0001) pour signifier
+                           ;si oui ou non il y a eu une division par zéro.
+div0:    .ASCII  "DIV/0\x00" ;Message à afficher en cas de vision par zéro.
+erreur:  .ASCII  "Erreur d'operateur!\x00" ;Message à afficher si opérateur 
+                                           ;non reconnu.
+         .END                  
